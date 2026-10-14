@@ -143,19 +143,20 @@ def sync(garmin_username, garmin_password, fromdate, todate, no_upload, verbose)
 		muscle_mass = group.get_muscle_mass()
 		hydration = group.get_hydration()
 		bone_mass = group.get_bone_mass()
-		bmi = round(weight / pow(height / 100, 2), 1) # weight (kg) / [height (m)] ^ 2
 
 		fit.write_device_info(timestamp=dt)
-		fit.write_weight_scale(
-			timestamp=dt,
-			weight=weight,
-			percent_fat=fat_ratio,
-			percent_hydration=(hydration * 100.0 / weight) if (hydration and weight) else None,
-			bone_mass=bone_mass,
-			muscle_mass=muscle_mass,
-			bmi = bmi,
-		)
-		verbose_print('appending weight scale record... %s %skg %s%%\n' % (dt, weight, fat_ratio))
+		if weight:
+			bmi = round(weight / pow(height / 100, 2), 1) # weight (kg) / [height (m)] ^ 2
+			fit.write_weight_scale(
+				timestamp=dt,
+				weight=weight,
+				percent_fat=fat_ratio,
+				percent_hydration=(hydration * 100.0 / weight) if (hydration and weight) else None,
+				bone_mass=bone_mass,
+				muscle_mass=muscle_mass,
+				bmi=bmi,
+			)
+			verbose_print('appending weight scale record... %s %skg %s%%\n' % (dt, weight, fat_ratio))
 
 		systolic_bp = group.get_systolic_bp()
 		diastolic_bp = group.get_diastolic_bp()
