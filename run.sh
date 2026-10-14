@@ -2,6 +2,6 @@
 
 echo `date`
 cd /src/Withings2Garmin;
-./sync.py
+./sync.py -v
 
 echo "----------------------------------------"
