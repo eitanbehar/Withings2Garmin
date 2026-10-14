@@ -244,12 +244,36 @@ class WithingsMeasureGroup(object):
                 return measure.get_value()
         return None
 
+    def get_systolic_bp(self):
+        """convenient function to get systolic blood pressure"""
+        for measure in self.measures:
+            if measure.type == WithingsMeasure.TYPE_SYSTOLIC_BP:
+                return measure.get_value()
+        return None
+
+    def get_diastolic_bp(self):
+        """convenient function to get diastolic blood pressure"""
+        for measure in self.measures:
+            if measure.type == WithingsMeasure.TYPE_DIASTOLIC_BP:
+                return measure.get_value()
+        return None
+
+    def get_heart_rate(self):
+        """convenient function to get heart rate"""
+        for measure in self.measures:
+            if measure.type == WithingsMeasure.TYPE_HEART_RATE:
+                return measure.get_value()
+        return None
+
 class WithingsMeasure(object):
     TYPE_WEIGHT = 1
     TYPE_HEIGHT = 4
     TYPE_FAT_FREE_MASS = 5
     TYPE_FAT_RATIO = 6
     TYPE_FAT_MASS_WEIGHT = 8
+    TYPE_DIASTOLIC_BP = 9
+    TYPE_SYSTOLIC_BP = 10
+    TYPE_HEART_RATE = 11
     TYPE_MUSCLE_MASS = 76
     TYPE_HYDRATION = 77
     TYPE_BONE_MASS = 88

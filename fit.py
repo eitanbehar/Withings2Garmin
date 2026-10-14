@@ -65,6 +65,7 @@ class Fit(object):
         'device_info': 23,
         'weight_scale': 30,
         'file_creator': 49,
+        'blood_pressure': 51,
     }
 
 
@@ -83,12 +84,14 @@ class FitEncoder_Weight(FitEncoder):
     LMSG_TYPE_FILE_CREATOR = 1
     LMSG_TYPE_DEVICE_INFO = 2
     LMSG_TYPE_WEIGHT_SCALE = 3
+    LMSG_TYPE_BLOOD_PRESSURE = 4
 
     def __init__(self):
         self.buf = BytesIO()
         self.write_header()  # create header first
         self.device_info_defined = False
         self.weight_scale_defined = False
+        self.blood_pressure_defined = False
 
     def __str__(self):
         orig_pos = self.buf.tell()
@@ -230,6 +233,25 @@ class FitEncoder_Weight(FitEncoder):
             self.weight_scale_defined = True
 
         header = self.record_header(lmsg_type=self.LMSG_TYPE_WEIGHT_SCALE)
+        self.buf.write(header + values)
+
+    def write_blood_pressure(self, timestamp, systolic, diastolic, heart_rate=None):
+        content = [
+            (253, FitBaseType.uint32, self.timestamp(timestamp), 1),
+            (0, FitBaseType.uint16, systolic, 1),
+            (1, FitBaseType.uint16, diastolic, 1),
+            (6, FitBaseType.uint8, heart_rate, 1),
+        ]
+        fields, values = self._build_content_block(content)
+
+        if not self.blood_pressure_defined:
+            header = self.record_header(definition=True, lmsg_type=self.LMSG_TYPE_BLOOD_PRESSURE)
+            msg_number = self.GMSG_NUMS['blood_pressure']
+            fixed_content = pack('BBHB', 0, 0, msg_number, len(content))
+            self.buf.write(header + fixed_content + fields)
+            self.blood_pressure_defined = True
+
+        header = self.record_header(lmsg_type=self.LMSG_TYPE_BLOOD_PRESSURE)
         self.buf.write(header + values)
 
     def record_header(self, definition=False, lmsg_type=0):

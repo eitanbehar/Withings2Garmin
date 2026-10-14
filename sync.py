@@ -156,6 +156,18 @@ def sync(garmin_username, garmin_password, fromdate, todate, no_upload, verbose)
 			bmi = bmi,
 		)
 		verbose_print('appending weight scale record... %s %skg %s%%\n' % (dt, weight, fat_ratio))
+
+		systolic_bp = group.get_systolic_bp()
+		diastolic_bp = group.get_diastolic_bp()
+		heart_rate = group.get_heart_rate()
+		if systolic_bp and diastolic_bp:
+			fit.write_blood_pressure(
+				timestamp=dt,
+				systolic=int(systolic_bp),
+				diastolic=int(diastolic_bp),
+				heart_rate=int(heart_rate) if heart_rate else None,
+			)
+			verbose_print('appending blood pressure record... %s %s/%s mmHg HR=%s\n' % (dt, systolic_bp, diastolic_bp, heart_rate))
 	fit.finish()
 
 	if no_upload:
