@@ -90,15 +90,16 @@ def sync(garmin_username, garmin_password, fromdate, todate, no_upload, verbose)
 		bone_mass = group.get_bone_mass()
 
 		fit.write_device_info(timestamp=dt)
-		fit.write_weight_scale(
-			timestamp=dt,
-			weight=weight,
-			percent_fat=fat_ratio,
-			percent_hydration=(hydration * 100.0 / weight) if (hydration and weight) else None,
-			bone_mass=bone_mass,
-			muscle_mass=muscle_mass
-		)
-		verbose_print('appending weight scale record... %s %skg %s%%\n' % (dt, weight, fat_ratio))
+		if weight:
+			fit.write_weight_scale(
+				timestamp=dt,
+				weight=weight,
+				percent_fat=fat_ratio,
+				percent_hydration=(hydration * 100.0 / weight) if (hydration and weight) else None,
+				bone_mass=bone_mass,
+				muscle_mass=muscle_mass
+			)
+			verbose_print('appending weight scale record... %s %skg %s%%\n' % (dt, weight, fat_ratio))
 	fit.finish()
 
 	if no_upload:
